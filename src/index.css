@@ -1,3 +1,6 @@
+/* ==========================================================================
+   1. RESET & BASE STYLES
+   ========================================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -6,70 +9,22 @@
 
 body {
   direction: rtl;
+  /* Right-to-Left layout for Arabic support */
   margin: 0;
   font-family: "IBM Plex Sans Arabic", sans-serif;
+  background-color: #f9f9f9;
 }
 
+/* ==========================================================================
+   2. LAYOUT & CONTAINERS
+   ========================================================================== */
 .page-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-header {
-  position: relative;
-  padding: 40px 100px;
-  width: 100%;
-  max-width: 1200px;
-  gap: 100px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-header .left {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 20px;
-}
-
-header .left .eid-elfeter {
-  width: 300px;
-  height: auto;
-}
-
-.logo {
-  width: 100px;
-  height: auto;
-}
-
-header .right {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-header .right img {
-  width: 100%;
-  max-width: 480px;
-  height: auto;
-}
-
-header::before {
-  content: "";
-  position: absolute;
-  width: 1px;
-  height: 120px;
-  background-color: #000;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
+/* Shared page background styling (for pages 1 & 2) */
 .page-one,
 .page-two {
   background-image: url("./assets/background-one.png");
@@ -85,7 +40,7 @@ header::before {
   align-items: center;
 }
 
-
+/* Specific styling for Page 3 with a repeating background */
 .page-three {
   background-image: url("./assets/background-one.png");
   background-repeat: repeat;
@@ -101,6 +56,70 @@ header::before {
   border-radius: 50px;
 }
 
+/* ==========================================================================
+   3. HEADER COMPONENT
+   ========================================================================== */
+header {
+  position: relative;
+  padding: 40px 100px;
+  width: 100%;
+  max-width: 1200px;
+  gap: 100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Vertical divider inside header */
+header::before {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 120px;
+  background-color: #000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+header .left,
+header .right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* Align left segment items to the end */
+header .left {
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+/* Align right segment items to the start */
+header .right {
+  justify-content: flex-start;
+}
+
+header .left .eid-elfeter {
+  width: 300px;
+  height: auto;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+}
+
+header .right img {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+}
+
+/* ==========================================================================
+   4. CARD COMPONENT
+   ========================================================================== */
 .card {
   background-color: white;
   border-radius: 60px;
@@ -109,24 +128,35 @@ header::before {
   align-items: center;
   justify-content: center;
   width: 85%;
-  padding: 70px 50px;
-  padding-bottom: 50px;
+  /* Standard padding for main cards */
+  padding: 70px 50px 50px 50px;
 }
 
-.page-two .card {
+/* Reduced padding for cards in subsequent pages */
+.page-two .card,
+.page-three .card {
   padding: 40px 20px;
 }
-
 
 .card h3 {
   font-weight: 700;
   font-size: 48px;
   color: #000;
   margin-bottom: 100px;
+  text-align: center;
 }
+
+/* Specific styling modifier for page three title */
+.page-three-title {
+  font-size: 28px !important;
+  margin-bottom: 20px !important;
+}
+
+/* --- Card Form Elements --- */
 
 .card input {
   background-color: #EE403280;
+  /* Semantic representation: #EE4032 with 50% opacity */
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -145,6 +175,7 @@ header::before {
   font-size: 36px;
 }
 
+/* Primary Button Styling */
 .card button {
   background-color: #2CB35D80;
   color: #fff;
@@ -154,7 +185,7 @@ header::before {
   font-size: 32px;
   cursor: pointer;
   margin-top: 25px;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, background-color 0.2s;
   font-family: inherit;
 }
 
@@ -163,19 +194,20 @@ header::before {
   opacity: 1;
 }
 
+/* Selectable Choice Buttons (e.g. Categories) */
 .card .btn-choice {
   background-color: #EE403280;
   border-radius: 12px;
   padding: 16px 30px;
   width: 100%;
   max-width: 600px;
-  margin-top: 0;
   margin-bottom: 15px;
   font-weight: normal;
   border: 3px solid transparent;
   transition: all 0.2s;
 }
 
+/* Hover and active states for choices */
 .card .btn-choice:hover,
 .card .btn-choice.selected {
   background-color: #EE4032;
@@ -187,7 +219,7 @@ header::before {
   transform: scale(0.98);
 }
 
-
+/* Variant modifier for blue choice buttons */
 .card .btn-choice.blue {
   background-color: #007AC080;
 }
@@ -197,6 +229,7 @@ header::before {
   background-color: #007AC0;
 }
 
+/* Navigation Action Buttons Group */
 .action-buttons {
   display: flex;
   justify-content: center;
@@ -205,26 +238,28 @@ header::before {
 }
 
 .card .action-buttons button {
-  margin-top: 0;
   padding: 5px 60px;
+  margin-top: 0;
 }
 
+/* Variant modifier for yellow navigation buttons */
+.card button.btn-yellow,
 .card button.yellow {
   background-color: #FFC10E80;
   color: #fff;
 }
 
+.card button.btn-yellow:hover,
 .card button.yellow:hover {
   background-color: #FFC10E;
 }
 
-/* Page Three Grid System */
-.page-three .card {
-  padding: 40px;
-}
-
+/* ==========================================================================
+   5. GRID SYSTEM (PAGE THREE)
+   ========================================================================== */
 .grid-container {
   display: grid;
+  /* 2 columns for larger screens */
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   width: 100%;
@@ -263,12 +298,23 @@ header::before {
   font-weight: bold;
   text-align: center;
   width: 90%;
+  pointer-events: none;
+  /* Prevents overlay text from blocking clicks */
 }
 
+/* ==========================================================================
+   6. RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+
+/* Medium Devices (Tablets, smaller desktops) */
 @media (max-width: 1024px) {
   header {
     padding: 30px 50px;
     gap: 40px;
+  }
+
+  header::before {
+    height: 90px;
   }
 
   header .left .eid-elfeter {
@@ -283,28 +329,74 @@ header::before {
     max-width: 300px;
   }
 
-  header::before {
-    height: 90px;
-  }
-
-  /* .page-one,
+  .page-one,
   .page-two {
     padding: 40px 20px;
   }
 
-  .page-one .card,
+  .card {
+    width: 85%;
+    min-height: 280px;
+    padding: 50px 20px;
+    border-radius: 20px;
+  }
+
   .page-two .card {
-    padding: 40px 20px;
-    min-height: 370px;
-  } */
+    padding: 15px 20px;
+  }
+
+  .card h3 {
+    font-size: 30px;
+    margin-bottom: 40px;
+  }
+
+  .card input {
+    max-width: 400px;
+    padding: 18px 50px;
+    font-size: 24px;
+  }
+
+  .card input::placeholder {
+    font-size: 24px;
+  }
+
+  .card button {
+    margin-top: 20px;
+    font-size: 20px;
+    padding: 5px 40px;
+  }
+
+  .card .btn-choice {
+    font-size: 24px;
+    margin: 15px;
+    padding: 10px 20px;
+  }
+
+  .action-buttons {
+    margin-top: 15px;
+    gap: 15px;
+  }
+
+  .card .action-buttons button {
+    padding: 5px 30px;
+  }
+
+  .page-three .card {
+    padding: 30px 20px;
+  }
 }
 
+/* Small Devices (Mobiles) */
 @media (max-width: 768px) {
   header {
     margin: 50px 0;
     width: 100%;
-    padding: 20px 0px;
+    padding: 20px 0;
     gap: 40px;
+  }
+
+  header::before {
+    height: 60px;
   }
 
   header .left {
@@ -322,10 +414,6 @@ header::before {
 
   header .right img {
     max-width: 200px;
-  }
-
-  header::before {
-    height: 60px;
   }
 
   .page-one,
@@ -347,26 +435,15 @@ header::before {
   }
 
   .card {
-    padding: 50px 20px;
-  }
-
-  .card input {
-    max-width: 300px;
-    padding: 18px 50px;
-    font-size: 24px;
-
-  }
-
-  .card input::placeholder {
-    font-size: 24px;
-  }
-
-
-  .card {
-    width: 85%;
+    width: 90%;
     min-height: 280px;
+    /* Extra top/bottom padding to breathe */
     padding: 100px 20px;
     border-radius: 20px;
+  }
+
+  .page-two .card {
+    padding: 30px 30px;
   }
 
   .card h3 {
@@ -375,9 +452,14 @@ header::before {
   }
 
   .card input {
+    max-width: 300px;
     font-size: 16px;
     padding: 10px 20px;
     border-radius: 50px;
+  }
+
+  .card input::placeholder {
+    font-size: 24px;
   }
 
   .card button {
@@ -390,7 +472,6 @@ header::before {
     font-size: 16px;
     padding: 10px 20px;
     border-radius: 50px;
-    margin-bottom: 15px;
   }
 
   .action-buttons {
@@ -398,14 +479,11 @@ header::before {
     gap: 15px;
   }
 
-  .card .action-buttons button {
-    padding: 5px 30px;
-  }
-
   .page-three .card {
     padding: 30px 15px;
   }
 
+  /* Reduce grid to single column on mobile screens */
   .grid-container {
     gap: 12px;
     grid-template-columns: 1fr;
@@ -416,17 +494,21 @@ header::before {
   }
 }
 
-/* Custom Popup Styles */
+/* ==========================================================================
+   7. POPUP MODALS / DIALOGS
+   ========================================================================== */
 .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  /* Dark semi-transparent background for focus */
   background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
+  /* High z-index to appear over all content */
   z-index: 9999;
 }
 
