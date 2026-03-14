@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-
 * {
   margin: 0;
   padding: 0;
@@ -289,16 +287,16 @@ header::before {
     height: 90px;
   }
 
-  .page-one,
+  /* .page-one,
   .page-two {
-    padding: 40px 0;
+    padding: 40px 20px;
   }
 
   .page-one .card,
   .page-two .card {
-    padding: 40px 0;
+    padding: 40px 20px;
     min-height: 370px;
-  }
+  } */
 }
 
 @media (max-width: 768px) {
@@ -348,13 +346,21 @@ header::before {
     padding: 20px 0;
   }
 
-  .page-two .card {
+  .card {
     padding: 50px 20px;
   }
 
-  .page-one input:placeholder {
+  .card input {
+    max-width: 300px;
+    padding: 18px 50px;
+    font-size: 24px;
+
+  }
+
+  .card input::placeholder {
     font-size: 24px;
   }
+
 
   .card {
     width: 85%;
