@@ -337,7 +337,7 @@ header::before {
     min-height: 470px;
     margin: 20px auto;
     background-size: 100% 100%;
-    background-image: url("./assets/background-one.png");
+    background-image: url("./assets/background-responsive.png");
   }
 
   .page-three {
