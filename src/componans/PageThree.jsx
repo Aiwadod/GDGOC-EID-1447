@@ -154,14 +154,159 @@ const normal = [
         textX: 270, textY: 370, fontSize: 24, color: '#000000'
     },
 ];
+
 const PageThree = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const userName = location.state?.name;
+    const userName = location.state?.name || 'اسم المستخدم';
+    console.log('📛 UserName in PageThree:', userName);
+
     const memberType = location.state?.memberType;
     const designs = memberType === 'gdsc' ? google : normal;
     const [selectedCard, setSelectedCard] = useState(null);
+    const [activeCard, setActiveCard] = useState(null);
     const [previewDesign, setPreviewDesign] = useState(null);
+    const canvasRefs = useRef([]);
+    const popupCanvasRef = useRef(null);
+    const observerRef = useRef(null);
+
+    const drawImageWithText = (canvas, design, userName, variant = 'grid') => {
+        console.log('🖌️ Drawing on canvas for design ID:', design.id);
+        if (!canvas) return;
+        if (!design?.image) {
+            console.error('❌ Missing design.image for design:', design);
+            return;
+        }
+
+        // طباعة القيم الخام للتصميم للتأكد
+        console.log('Design raw values:', {
+            textX: design.textX,
+            textY: design.textY,
+            fontSize: design.fontSize,
+            color: design.color
+        });
+
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = design.image;
+
+        img.onload = () => {
+            console.log(`✅ Image loaded: ${img.width}x${img.height}`);
+
+            // تحديد الحجم المناسب للعرض
+            const maxSide = variant === 'preview' ? 1200 : 520;
+            const renderScale = Math.min(maxSide / img.width, maxSide / img.height, 1);
+            const renderW = Math.max(1, Math.round(img.width * renderScale));
+            const renderH = Math.max(1, Math.round(img.height * renderScale));
+
+            canvas.width = renderW;
+            canvas.height = renderH;
+            ctx.clearRect(0, 0, renderW, renderH);
+            ctx.drawImage(img, 0, 0, renderW, renderH);
+
+            const safeName = (userName && String(userName).trim()) ? String(userName).trim() : 'اسم المستخدم';
+
+            // استخراج القيم مع التأكد من أنها أرقام صالحة
+            const rawX = Number.isFinite(design.textX) ? design.textX : 0;
+            const rawY = Number.isFinite(design.textY) ? design.textY : 0;
+            const rawFont = Number.isFinite(design.fontSize) ? design.fontSize : 32;
+
+            // معاملات التحجيم
+            const sx = renderW / img.width;
+            const sy = renderH / img.height;
+
+            // حساب الإحداثيات الأولية بناءً على القيم الخام
+            let x = rawX * sx;
+            let y = rawY * sy;
+
+            // التحقق مما إذا كانت الإحداثيات صغيرة جداً (أقل من 50 بكسل) - فهذا يعني أنها غير صالحة
+            const threshold = 50;
+            if (x < threshold || y < threshold || rawX === 0 || rawY === 0) {
+                console.log(`⚠️ Coordinates too small (${x.toFixed(0)},${y.toFixed(0)}), using fallback position (bottom-right)`);
+                // استخدم إحداثيات افتراضية: 80% من العرض، 85% من الارتفاع
+                x = renderW * 0.8;
+                y = renderH * 0.85;
+            }
+
+            // تطبيق الهامش لضمان عدم التصاق النص بالحافة
+            const padding = Math.max(20, renderW * 0.05);
+            x = Math.min(Math.max(x, padding), renderW - padding);
+            y = Math.min(Math.max(y, padding), renderH - padding);
+
+            // حساب حجم الخط
+            let fontSize = Math.round(rawFont * Math.min(sx, sy));
+            fontSize = Math.max(40, fontSize); // لا يقل عن 40 بكسل
+            fontSize = Math.min(fontSize, renderH * 0.2); // لا يزيد عن 20% من ارتفاع الصورة
+
+            // رسم النص مع ظل وحد ليسهل قراءته
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.font = `bold ${fontSize}px 'Cairo', sans-serif`;
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = design.color || '#ffffff';
+
+            // رسم حد حول النص
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = fontSize * 0.15;
+            ctx.strokeText(safeName, x, y);
+            ctx.fillText(safeName, x, y);
+            ctx.restore();
+
+            console.log(`✅ Text drawn: "${safeName}" at (${Math.round(x)},${Math.round(y)}) with font ${fontSize}px`);
+        };
+        img.onerror = (err) => console.error('❌ خطأ في تحميل الصورة:', design.image, err);
+    };
+
+    const observeCanvas = useCallback((canvas, design, userName, variant = 'grid') => {
+        if (!canvas) return;
+        if (!observerRef.current) {
+            observerRef.current = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const canvasEl = entry.target;
+                        const designStr = canvasEl.dataset.design;
+                        const userNameStr = canvasEl.dataset.username;
+                        const variantStr = canvasEl.dataset.variant;
+                        if (designStr && userNameStr) {
+                            try {
+                                const designObj = JSON.parse(designStr);
+                                drawImageWithText(canvasEl, designObj, userNameStr, variantStr || 'grid');
+                            } catch (e) {
+                                console.error('خطأ في تحليل بيانات التصميم', e);
+                            }
+                        }
+                        observerRef.current.unobserve(canvasEl);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '50px' });
+        }
+        canvas.dataset.design = JSON.stringify(design);
+        canvas.dataset.username = userName;
+        canvas.dataset.variant = variant;
+        observerRef.current.observe(canvas);
+    }, []);
+
+    useEffect(() => {
+        if (previewDesign && popupCanvasRef.current) {
+            drawImageWithText(popupCanvasRef.current, previewDesign, userName, 'preview');
+        }
+    }, [previewDesign, userName]);
+
+    const handleViewClick = (e, design) => {
+        e.stopPropagation();
+        setPreviewDesign(design);
+    };
+
+    const handleSelectClick = (e, index) => {
+        e.stopPropagation();
+        setSelectedCard(index);
+        setActiveCard(null);
+    };
 
     const handleNext = () => {
         if (selectedCard !== null) {
@@ -187,27 +332,23 @@ const PageThree = () => {
                             <div
                                 key={design.id}
                                 className={`grid-item ${selectedCard === index ? 'selected' : ''}`}
+                                onClick={() => setActiveCard(activeCard === index ? null : index)}
+                                role="button"
+                                tabIndex={0}
                             >
-                                <img
-                                    src={design.image}
-                                    alt={design.name}
-                                    style={{ width: '100%', height: 'auto', display: 'block' }}
-                                    loading="lazy"
+                                <canvas
+                                    ref={(el) => {
+                                        canvasRefs.current[index] = el;
+                                        if (el) observeCanvas(el, design, userName, 'grid');
+                                    }}
+                                    style={{ width: '100%', height: 'auto', display: 'block', background: '#f0f0f0' }}
                                 />
-                                <div className="card-actions">
-                                    <button
-                                        className="btn-view"
-                                        onClick={() => setPreviewDesign(design)}
-                                    >
-                                        عرض
-                                    </button>
-                                    <button
-                                        className="btn-select"
-                                        onClick={() => setSelectedCard(index)}
-                                    >
-                                        اختيار
-                                    </button>
-                                </div>
+                                {activeCard === index && (
+                                    <div className="card-overlay" onClick={(e) => e.stopPropagation()}>
+                                        <button className="btn-view" onClick={(e) => handleViewClick(e, design)}>عرض</button>
+                                        <button className="btn-select" onClick={(e) => handleSelectClick(e, index)}>إختيار</button>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -222,14 +363,15 @@ const PageThree = () => {
             </main>
 
             {previewDesign && (
-                <div className="preview-modal" onClick={() => setPreviewDesign(null)}>
-                    <div className="preview-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-btn" onClick={() => setPreviewDesign(null)}>×</button>
-                        <img src={previewDesign.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '80vh' }} />
-                        <p style={{ textAlign: 'center', marginTop: '10px' }}>سيتم إضافة اسمك على الصورة في الصفحة التالية</p>
+                <div className="image-popup-overlay" onClick={() => setPreviewDesign(null)}>
+                    <div className="image-popup-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="btn-close-popup" onClick={() => setPreviewDesign(null)}>×</button>
+                        <canvas ref={popupCanvasRef} style={{ maxWidth: '100%', maxHeight: '80vh' }} />
                     </div>
                 </div>
             )}
         </div>
     );
 };
+
+export default PageThree;
