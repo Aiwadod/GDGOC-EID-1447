@@ -4,6 +4,14 @@ import { FaWhatsapp, FaSnapchatGhost, FaInstagram, FaLinkedinIn, FaTiktok } from
 import { FaXTwitter } from 'react-icons/fa6';
 import Header from './Header';
 
+// Font definitions (must match PageThree)
+const FONTS = {
+    IBM_PLEX_ARABIC: "'IBM Plex Arabic', sans-serif",
+    AYNAMA_CURVED: "'Aynama Curved', sans-serif",
+    KHALAYA: "'Khalaya', sans-serif",
+    KHALAYA_VF: "'Khalaya VF', sans-serif",
+};
+
 const PageFour = () => {
     const location = useLocation();
     const { name, design } = location.state || {};
@@ -28,12 +36,17 @@ const PageFour = () => {
                 await navigator.share({ ...sharePayload, files: [file] });
                 return;
             } catch (err) {
-                // User cancelled or OS share failed — fall back to download.
-                console.log(err);
+                console.log(err); // User cancelled or share failed
             }
         }
 
-        alert(`المشاركة عبر ${platformLabel} غير مدعومة مباشرة على هذا الجهاز. الصورة تم حفظها عند الضغط على "التالي" — شاركها يدويًا من المعرض.`);
+        // Fallback: download the image
+        const url = URL.createObjectURL(imageBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `eid-card-${Date.now()}.png`;
+        link.click();
+        URL.revokeObjectURL(url);
     };
 
     useEffect(() => {
@@ -46,16 +59,69 @@ const PageFour = () => {
         img.src = design.image;
 
         img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
+            // Use a reasonable max dimension for preview (similar to PageThree preview mode)
+            const maxSide = 1200; // preview size
+            const renderScale = Math.min(maxSide / img.width, maxSide / img.height, 1);
+            const renderW = Math.max(1, Math.round(img.width * renderScale));
+            const renderH = Math.max(1, Math.round(img.height * renderScale));
 
-            ctx.font = `bold ${design.fontSize}px 'Cairo', sans-serif`;
-            ctx.fillStyle = design.color;
+            canvas.width = renderW;
+            canvas.height = renderH;
+            ctx.clearRect(0, 0, renderW, renderH);
+            ctx.drawImage(img, 0, 0, renderW, renderH);
+
+            const safeName = (name && String(name).trim()) ? String(name).trim() : 'User Name';
+
+            // Get design values with fallbacks
+            const rawX = Number.isFinite(design.textX) ? design.textX : 0;
+            const rawY = Number.isFinite(design.textY) ? design.textY : 0;
+            const rawFont = Number.isFinite(design.fontSize) ? design.fontSize : 32;
+            const fontFamily = design.fontFamily || FONTS.IBM_PLEX_ARABIC;
+
+            // Scaling factors
+            const sx = renderW / img.width;
+            const sy = renderH / img.height;
+
+            // Compute coordinates
+            let x = rawX * sx;
+            let y = rawY * sy;
+
+            // Fallback for invalid coordinates
+            const threshold = 50;
+            if (x < threshold || y < threshold || rawX === 0 || rawY === 0) {
+                x = renderW * 0.8;
+                y = renderH * 0.85;
+            }
+
+            // Apply padding
+            const padding = Math.max(20, renderW * 0.05);
+            x = Math.min(Math.max(x, padding), renderW - padding);
+            y = Math.min(Math.max(y, padding), renderH - padding);
+
+            // Compute font size (minimum 40px)
+            let fontSize = Math.round(rawFont * Math.min(sx, sy));
+            fontSize = Math.max(40, fontSize);
+            fontSize = Math.min(fontSize, renderH * 0.2);
+
+            // Draw text with stroke and shadow for readability
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.font = `bold ${fontSize}px ${fontFamily}`;
             ctx.textAlign = 'right';
-            ctx.fillText(name, design.textX, design.textY);
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = design.color || '#ffffff';
 
-            // Create a PNG blob for download/share.
+            // Outline
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = fontSize * 0.15;
+            ctx.strokeText(safeName, x, y);
+            ctx.fillText(safeName, x, y);
+            ctx.restore();
+
+            // Generate blob for sharing/download
             canvas.toBlob(
                 (blob) => {
                     if (!blob) return;
@@ -112,6 +178,9 @@ const PageFour = () => {
                     </div>
                 </div>
             </main>
+            <footer>
+                <a href='https://linktr.ee/ai.wadod' target='.blank'>تصميم و تطوير <span>ودود</span></a>
+            </footer>
         </div>
     );
 };

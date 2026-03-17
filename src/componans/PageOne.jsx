@@ -9,8 +9,21 @@ const PageOne = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
     const handleNext = () => {
-        const wordCount = name.trim().split(/\s+/).filter(word => word.length > 0).length;
-        if (wordCount >= 2) {
+        const trimmed = name.trim();
+        const arabicOnly = /^[\u0600-\u06FF\s]+$/;
+        const words = trimmed.split(/\s+/).filter((w) => w.length > 0);
+
+        if (!trimmed) {
+            setErrorMessage('الرجاء إدخال الاسم');
+            return;
+        }
+
+        if (!arabicOnly.test(trimmed)) {
+            setErrorMessage('الرجاء كتابة الاسم باللغة العربية فقط');
+            return;
+        }
+
+        if (words.length >= 2) {
             navigate('/page-two', { state: { name } });
         } else {
             setErrorMessage('الرجاء إدخال الاسم الثنائي (كلمتين على الأقل)');

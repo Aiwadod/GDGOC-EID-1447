@@ -9,6 +9,27 @@ RESET & BASE STYLES
   box-sizing: border-box;
 }
 
+/* fonts */
+@font-face {
+  font-family: "IBM Plex Arabic";
+  src: url("./assets/fonts/IBMPlexSansArabic-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Aynama Curved";
+  src: url("./assets/fonts/KOAynama-Curved.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Khalaya";
+  src: url("./assets/fonts/KoKhalaya-5-5.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Khalaya VF";
+  src: url("./assets/fonts/KoKhalayaVF.ttf") format("truetype");
+}
+
 body {
   direction: rtl;
   /* Right-to-Left layout for Arabic support */
@@ -629,6 +650,25 @@ header .right img {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding-bottom: 30px;
+}
+
+footer a {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+}
+
+footer span {
+  font-size: 24px;
+}
+
 /* ==========================================================================
   9. MEDIA QUERIES (All responsive rules grouped at the end)
   ========================================================================== */
@@ -881,7 +921,6 @@ header .right img {
   .share-buttons-grid {
     max-width: 100%;
     gap: 10px;
-    grid-template-columns: 1fr;
   }
 
   .share-btn {
