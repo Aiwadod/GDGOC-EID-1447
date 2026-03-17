@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
 import { FaWhatsapp, FaSnapchatGhost, FaInstagram, FaLinkedinIn, FaTiktok } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -7,21 +7,48 @@ import Header from './Header';
 const PageFour = () => {
     const location = useLocation();
     const { name, design } = location.state || {};
-
-    // للتأكد من وصول البيانات
-    console.log('PageFour received:', { name, design });
-
     const canvasRef = useRef(null);
+    const [imageBlob, setImageBlob] = useState(null);
+    const [isReady, setIsReady] = useState(false);
+    const hasAutoDownloaded = useRef(false);
+
+    const sharePayload = useMemo(() => ({ title: 'عيد مبارك', text: 'عيد مبارك' }), []);
+
+    const downloadImage = (blob, userName) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `eid-card-${userName || 'user'}-${Date.now()}.png`;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const shareImage = async (platformLabel) => {
+        if (!imageBlob) return;
+
+        const file = new File([imageBlob], 'eid-card.png', { type: 'image/png' });
+        const canShareFile =
+            typeof navigator !== 'undefined' &&
+            typeof navigator.share === 'function' &&
+            typeof navigator.canShare === 'function' &&
+            navigator.canShare({ files: [file] });
+
+        if (canShareFile) {
+            try {
+                await navigator.share({ ...sharePayload, files: [file] });
+                return;
+            } catch (err) {
+                // User cancelled or OS share failed — fall back to download.
+                console.log(err);
+            }
+        }
+
+        alert(`المشاركة عبر ${platformLabel} غير مدعومة مباشرة على هذا الجهاز. سيتم حفظ الصورة، ثم شاركها يدويًا.`);
+        downloadImage(imageBlob, name);
+    };
 
     useEffect(() => {
-        if (!name || !design) {
-            console.log('Missing name or design');
-            return;
-        }
-        if (!canvasRef.current) {
-            console.log('Canvas ref not ready');
-            return;
-        }
+        if (!name || !design || !canvasRef.current) return;
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
@@ -30,7 +57,6 @@ const PageFour = () => {
         img.src = design.image;
 
         img.onload = () => {
-            console.log('Image loaded:', design.image);
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
@@ -39,79 +65,34 @@ const PageFour = () => {
             ctx.fillStyle = design.color;
             ctx.textAlign = 'right';
             ctx.fillText(name, design.textX, design.textY);
+
+            // Create a PNG blob for download/share.
+            canvas.toBlob(
+                (blob) => {
+                    if (!blob) return;
+                    setImageBlob(blob);
+                    setIsReady(true);
+                },
+                'image/png',
+                1
+            );
         };
 
-        img.onerror = (err) => {
-            console.error('Failed to load image:', design.image, err);
-        };
+        img.onerror = (err) => console.error('Failed to load image', err);
     }, [name, design]);
 
-    // إذا لم يصل الاسم أو التصميم، نوجه المستخدم إلى الصفحة الرئيسية
+    // Auto-download once the image is ready (triggered by the user's click from PageThree).
+    useEffect(() => {
+        if (!isReady || !imageBlob) return;
+        if (!hasAutoDownloaded.current) {
+            hasAutoDownloaded.current = true;
+            downloadImage(imageBlob, name);
+        }
+    }, [isReady, imageBlob, name]);
+
     if (!name || !design) {
-        console.log('Redirecting to home due to missing data');
         return <Navigate to="/" replace />;
     }
-
-    // دالة تحويل canvas إلى blob
-    const getImageBlob = () => {
-        return new Promise((resolve) => {
-            const canvas = canvasRef.current;
-            if (!canvas) {
-                resolve(null);
-                return;
-            }
-            canvas.toBlob((blob) => resolve(blob), 'image/png');
-        });
-    };
-
-    // دالة تحميل الصورة كملف
-    const downloadImage = () => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const link = document.createElement('a');
-        link.download = `eid-image-${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    };
-
-    // دالة المشاركة الرئيسية
-    const shareImage = async (platform) => {
-        console.log('Share button clicked for platform:', platform);
-
-        // أولاً نحاول الحصول على blob الصورة
-        const blob = await getImageBlob();
-        if (!blob) {
-            alert('لم نتمكن من تحضير الصورة للمشاركة');
-            return;
-        }
-
-        const file = new File([blob], 'eid-image.png', { type: 'image/png' });
-
-        // التحقق من دعم مشاركة الملفات عبر Web Share API
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    files: [file],
-                    title: 'عيد مبارك',
-                    text: 'كل عام وانتم بخير',
-                });
-                console.log('Shared successfully');
-                return; // تمت المشاركة بنجاح
-            } catch (error) {
-                console.log('User cancelled or sharing failed:', error);
-                // إذا ألغى المستخدم المشاركة، لا نفعل شيئًا
-                // ولكن إذا كان خطأ تقني، نكمل إلى الخيارات الأخرى
-            }
-        }
-
-        // إذا لم يدعم الجهاز مشاركة الملفات، نعرض رسالة ثم نقوم بتحميل الصورة
-        alert(`مشاركة عبر ${platform} لا تدعم رفع الصور مباشرة على هذا الجهاز. سيتم تحميل الصورة، ثم يمكنك مشاركتها يدويًا.`);
-        downloadImage();
-    };
-
-    const handleShare = (platform) => {
-        shareImage(platform);
-    };
 
     return (
         <div className="page-container">
@@ -122,23 +103,34 @@ const PageFour = () => {
                         <h3>كل عام وانتم الخير</h3>
                         <p className="share-subtitle">شاركوا فرحتكم مع احبابكم!</p>
 
+                        <button
+                            type="button"
+                            className="share-btn whatsapp"
+                            onClick={() => imageBlob && downloadImage(imageBlob, name)}
+                            disabled={!isReady}
+                            aria-label="Download image"
+                            style={{ maxWidth: 380, marginBottom: 18 }}
+                        >
+                            {isReady ? 'حفظ الصورة في الجهاز' : 'جاري تجهيز الصورة...'}
+                        </button>
+
                         <div className="share-buttons-grid">
-                            <button className="share-btn whatsapp" onClick={() => handleShare('whatsapp')} aria-label="Share on WhatsApp">
+                            <button className="share-btn whatsapp" onClick={() => shareImage('WhatsApp')} disabled={!isReady} aria-label="Share on WhatsApp">
                                 <FaWhatsapp size={28} />
                             </button>
-                            <button className="share-btn x-br" onClick={() => handleShare('x')} aria-label="Share on X">
+                            <button className="share-btn x-br" onClick={() => shareImage('X')} disabled={!isReady} aria-label="Share on X">
                                 <FaXTwitter size={28} />
                             </button>
-                            <button className="share-btn instagram" onClick={() => handleShare('instagram')} aria-label="Share on Instagram">
+                            <button className="share-btn instagram" onClick={() => shareImage('Instagram')} disabled={!isReady} aria-label="Share on Instagram">
                                 <FaInstagram size={28} />
                             </button>
-                            <button className="share-btn snapchat" onClick={() => handleShare('snapchat')} aria-label="Share on Snapchat">
+                            <button className="share-btn snapchat" onClick={() => shareImage('Snapchat')} disabled={!isReady} aria-label="Share on Snapchat">
                                 <FaSnapchatGhost size={28} />
                             </button>
-                            <button className="share-btn tiktok" onClick={() => handleShare('tiktok')} aria-label="Share on TikTok">
+                            <button className="share-btn tiktok" onClick={() => shareImage('TikTok')} disabled={!isReady} aria-label="Share on TikTok">
                                 <FaTiktok size={28} />
                             </button>
-                            <button className="share-btn linkedin" onClick={() => handleShare('linkedin')} aria-label="Share on LinkedIn">
+                            <button className="share-btn linkedin" onClick={() => shareImage('LinkedIn')} disabled={!isReady} aria-label="Share on LinkedIn">
                                 <FaLinkedinIn size={28} />
                             </button>
                         </div>

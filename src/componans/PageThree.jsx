@@ -62,13 +62,7 @@ const PageThree = () => {
     const canvasRefs = useRef([]);
     const popupCanvasRef = useRef(null);
 
-    useEffect(() => {
-        if (previewDesign && popupCanvasRef.current) {
-            drawImageWithText(popupCanvasRef.current, previewDesign, userName);
-        }
-    }, [previewDesign, userName]);
-
-    // دالة رسم الصورة والنص على الكانفس
+    // Draw template image + user name onto a canvas.
     const drawImageWithText = (canvas, design, userName) => {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -76,11 +70,9 @@ const PageThree = () => {
         img.crossOrigin = 'anonymous';
         img.src = design.image;
         img.onload = () => {
-            // ضبط أبعاد الكانفس حسب أبعاد الصورة
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
-            // رسم النص
             ctx.font = `bold ${design.fontSize}px 'Cairo', sans-serif`;
             ctx.fillStyle = design.color;
             ctx.textAlign = 'right';
@@ -90,6 +82,12 @@ const PageThree = () => {
             console.error('خطأ في تحميل الصورة:', design.image, err);
         };
     };
+
+    useEffect(() => {
+        if (previewDesign && popupCanvasRef.current) {
+            drawImageWithText(popupCanvasRef.current, previewDesign, userName);
+        }
+    }, [previewDesign, userName]);
 
     const handleViewClick = (e, design) => {
         e.stopPropagation();
@@ -108,20 +106,6 @@ const PageThree = () => {
             navigate('/page-four', { state: { name: userName, design: designs[selectedCard] }});
         } else {
             alert('الرجاء اختيار أحد التصاميم للمتابعة');
-        }
-    };
-
-    const downloadSelectedImage = () => {
-        if (selectedCard === null) {
-            alert('الرجاء اختيار تصميم أولاً');
-            return;
-        }
-        const canvas = canvasRefs.current[selectedCard];
-        if (canvas) {
-            const link = document.createElement('a');
-            link.download = `design-${selectedCard + 1}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
         }
     };
 
