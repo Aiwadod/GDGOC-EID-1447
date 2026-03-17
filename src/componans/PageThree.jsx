@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
@@ -158,15 +158,16 @@ const PageThree = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const userName = location.state?.name;
-    const memberType = location.state?.memberType; // 'gdsc' | 'other'
+    const memberType = location.state?.memberType;
     const designs = memberType === 'gdsc' ? google : normal;
     const [selectedCard, setSelectedCard] = useState(null);
     const [activeCard, setActiveCard] = useState(null);
     const [previewDesign, setPreviewDesign] = useState(null);
     const canvasRefs = useRef([]);
     const popupCanvasRef = useRef(null);
+    const observerRef = useRef(null); // مراقب التقاطع
 
-    // Draw template image + user name onto a canvas.
+    // دالة رسم الصورة والنص (بدون تغيير)
     const drawImageWithText = (canvas, design, userName) => {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -182,11 +183,46 @@ const PageThree = () => {
             ctx.textAlign = 'right';
             ctx.fillText(userName, design.textX, design.textY);
         };
-        img.onerror = (err) => {
-            console.error('خطأ في تحميل الصورة:', design.image, err);
-        };
+        img.onerror = (err) => console.error('خطأ في تحميل الصورة:', design.image, err);
     };
 
+    // دالة لبدء مراقبة عنصر canvas
+    const observeCanvas = useCallback((canvas, design, userName) => {
+        if (!canvas) return;
+
+        // إذا لم يتم إنشاء الـ observer بعد، قم بإنشائه
+        if (!observerRef.current) {
+            observerRef.current = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const canvasEl = entry.target;
+                        // استرجاع البيانات من data attributes
+                        const designStr = canvasEl.dataset.design;
+                        const userNameStr = canvasEl.dataset.username;
+                        if (designStr && userNameStr) {
+                            try {
+                                const designObj = JSON.parse(designStr);
+                                drawImageWithText(canvasEl, designObj, userNameStr);
+                            } catch (e) {
+                                console.error('خطأ في تحليل بيانات التصميم', e);
+                            }
+                        }
+                        // بعد الرسم، توقف عن مراقبة هذا العنصر
+                        observerRef.current.unobserve(canvasEl);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '50px' }); // يبدأ التحميل عندما يصبح العنصر على بعد 50px من الظهور
+        }
+
+        // تخزين بيانات التصميم واسم المستخدم في data attributes
+        canvas.dataset.design = JSON.stringify(design);
+        canvas.dataset.username = userName;
+
+        // بدء المراقبة
+        observerRef.current.observe(canvas);
+    }, []);
+
+    // عرض الصورة في النافذة المنبثقة (نفس الكود)
     useEffect(() => {
         if (previewDesign && popupCanvasRef.current) {
             drawImageWithText(popupCanvasRef.current, previewDesign, userName);
@@ -203,7 +239,6 @@ const PageThree = () => {
         setSelectedCard(index);
         setActiveCard(null);
     };
-
 
     const handleNext = () => {
         if (selectedCard !== null) {
@@ -252,10 +287,9 @@ const PageThree = () => {
                                 <canvas
                                     ref={(el) => {
                                         canvasRefs.current[index] = el;
-                                        // استدعاء الرسم فور توفر العنصر
-                                        if (el) drawImageWithText(el, design, userName);
+                                        if (el) observeCanvas(el, design, userName); // استخدام lazy loading
                                     }}
-                                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                                    style={{ width: '100%', height: 'auto', display: 'block', background: '#f0f0f0' }} // خلفية مؤقتة
                                 />
                                 {activeCard === index && (
                                     <div className="card-overlay" onClick={(e) => { e.stopPropagation(); setActiveCard(null); }}>
