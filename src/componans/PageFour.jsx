@@ -10,18 +10,8 @@ const PageFour = () => {
     const canvasRef = useRef(null);
     const [imageBlob, setImageBlob] = useState(null);
     const [isReady, setIsReady] = useState(false);
-    const hasAutoDownloaded = useRef(false);
 
     const sharePayload = useMemo(() => ({ title: 'عيد مبارك', text: 'عيد مبارك' }), []);
-
-    const downloadImage = (blob, userName) => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `eid-card-${userName || 'user'}-${Date.now()}.png`;
-        link.click();
-        URL.revokeObjectURL(url);
-    };
 
     const shareImage = async (platformLabel) => {
         if (!imageBlob) return;
@@ -43,8 +33,7 @@ const PageFour = () => {
             }
         }
 
-        alert(`المشاركة عبر ${platformLabel} غير مدعومة مباشرة على هذا الجهاز. سيتم حفظ الصورة، ثم شاركها يدويًا.`);
-        downloadImage(imageBlob, name);
+        alert(`المشاركة عبر ${platformLabel} غير مدعومة مباشرة على هذا الجهاز. الصورة تم حفظها عند الضغط على "التالي" — شاركها يدويًا من المعرض.`);
     };
 
     useEffect(() => {
@@ -81,15 +70,6 @@ const PageFour = () => {
         img.onerror = (err) => console.error('Failed to load image', err);
     }, [name, design]);
 
-    // Auto-download once the image is ready (triggered by the user's click from PageThree).
-    useEffect(() => {
-        if (!isReady || !imageBlob) return;
-        if (!hasAutoDownloaded.current) {
-            hasAutoDownloaded.current = true;
-            downloadImage(imageBlob, name);
-        }
-    }, [isReady, imageBlob, name]);
-
     if (!name || !design) {
         return <Navigate to="/" replace />;
     }
@@ -102,17 +82,6 @@ const PageFour = () => {
                     <div className="share-section">
                         <h3>كل عام وانتم الخير</h3>
                         <p className="share-subtitle">شاركوا فرحتكم مع احبابكم!</p>
-
-                        <button
-                            type="button"
-                            className="share-btn whatsapp"
-                            onClick={() => imageBlob && downloadImage(imageBlob, name)}
-                            disabled={!isReady}
-                            aria-label="Download image"
-                            style={{ maxWidth: 380, marginBottom: 18 }}
-                        >
-                            {isReady ? 'حفظ الصورة في الجهاز' : 'جاري تجهيز الصورة...'}
-                        </button>
 
                         <div className="share-buttons-grid">
                             <button className="share-btn whatsapp" onClick={() => shareImage('WhatsApp')} disabled={!isReady} aria-label="Share on WhatsApp">

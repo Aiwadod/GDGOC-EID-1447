@@ -103,7 +103,22 @@ const PageThree = () => {
 
     const handleNext = () => {
         if (selectedCard !== null) {
-            navigate('/page-four', { state: { name: userName, design: designs[selectedCard] }});
+            const selectedCanvas = canvasRefs.current[selectedCard];
+            if (selectedCanvas) {
+                selectedCanvas.toBlob((blob) => {
+                    if (blob) {
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `eid-card-${userName || 'user'}-${Date.now()}.png`;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                    }
+                    navigate('/page-four', { state: { name: userName, design: designs[selectedCard] } });
+                }, 'image/png');
+            } else {
+                navigate('/page-four', { state: { name: userName, design: designs[selectedCard] } });
+            }
         } else {
             alert('الرجاء اختيار أحد التصاميم للمتابعة');
         }
