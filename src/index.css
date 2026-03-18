@@ -841,7 +841,7 @@ footer span {
   header {
     width: 95%;
     padding: 20px 0;
-    gap: 40px;
+    gap: 30px;
   }
 
   header::before {
@@ -870,7 +870,7 @@ footer span {
     border-radius: 20px;
     width: 90%;
     min-height: 470px;
-    margin: 20px auto 40px auto;
+    margin: 20px auto 35px auto;
     background-size: 100% 100%;
     background-image: url("./assets/backgrounds/background-responsive.png");
   }
