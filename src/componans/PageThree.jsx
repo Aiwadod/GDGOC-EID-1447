@@ -2,6 +2,32 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
+// Countdown overlay shown while a card image is still loading
+const CountdownOverlay = ({ loaded }) => {
+    const [count, setCount] = useState(30);
+
+    useEffect(() => {
+        if (loaded) return;
+        setCount(30);
+        const id = setInterval(() => {
+            setCount(prev => {
+                if (prev <= 1) { clearInterval(id); return 0; }
+                return prev - 1;
+            });
+        }, 1000);
+        return () => clearInterval(id);
+    }, [loaded]);
+
+    if (loaded) return null;
+
+    return (
+        <div className="card-loading-overlay">
+            <span className="card-loading-count">(00:{count})</span>
+            <p className="card-loading-text"> نُقدر انتظارك لنقدم اعلى جودة التصاميم  🤍</p>
+        </div>
+    );
+};
+
 const FONTS = {
     IBM_PLEX_ARABIC: "'IBM Plex Arabic', sans-serif",
     AYNAMA_CURVED: "'Aynama Curved', sans-serif",
@@ -29,7 +55,7 @@ const google = [
     { id: 8, image: getAssetUrlByFilename(googleAssetUrls, 'design8.jpg'), textX: 2481, textY: 6560, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
     { id: 9, image: getAssetUrlByFilename(googleAssetUrls, 'design9.jpg'), textX: 2481, textY: 1700, fontSizeRatio: 0.06, color: '#c1803a', fontFamily: FONTS.AYNAMA_CURVED },
     { id: 10, image: getAssetUrlByFilename(googleAssetUrls, 'design10.jpg'), textX: 2481, textY: 2355, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
-    { id: 11, image: getAssetUrlByFilename(googleAssetUrls, 'design11.jpg'), textX: 2821, textY: 1760, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 11, image: getAssetUrlByFilename(googleAssetUrls, 'design11.jpg'), textX: 2821, textY: 1720, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
 ];
 
 const normal = [
@@ -43,10 +69,10 @@ const normal = [
     { id: 8, image: getAssetUrlByFilename(normalAssetUrls, 'design8.jpg'), textX: 2481, textY: 6560, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
     { id: 9, image: getAssetUrlByFilename(normalAssetUrls, 'design9.jpg'), textX: 2481, textY: 1700, fontSizeRatio: 0.06, color: '#c1803a', fontFamily: FONTS.AYNAMA_CURVED },
     { id: 10, image: getAssetUrlByFilename(normalAssetUrls, 'design10.jpg'), textX: 2481, textY: 2355, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
-    { id: 11, image: getAssetUrlByFilename(normalAssetUrls, 'design11.jpg'), textX: 2821, textY: 1760, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 11, image: getAssetUrlByFilename(normalAssetUrls, 'design11.jpg'), textX: 2821, textY: 1720, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
 ];
 
-function drawCard(canvas, design, userName, variant = 'grid') {
+function drawCard(canvas, design, userName, variant = 'grid', onReady) {
     if (!canvas || !design?.image) return;
     const ctx = canvas.getContext('2d');
     const img = new Image();
@@ -70,6 +96,7 @@ function drawCard(canvas, design, userName, variant = 'grid') {
         ctx.fillStyle = design.color;
         ctx.fillText(name, x, y);
         ctx.restore();
+        if (onReady) onReady();
     };
     img.src = design.image;
 }
@@ -85,6 +112,7 @@ const PageThree = () => {
     const [activeCard, setActiveCard] = useState(null);
     const [previewDesign, setPreviewDesign] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [loadedCards, setLoadedCards] = useState(new Set());
 
     const canvasRefs = useRef([]);
     const popupCanvasRef = useRef(null);
@@ -92,7 +120,9 @@ const PageThree = () => {
     const setCanvasRef = useCallback((el, index, design) => {
         if (!el) return;
         canvasRefs.current[index] = el;
-        drawCard(el, design, userName, 'grid');
+        drawCard(el, design, userName, 'grid', () => {
+            setLoadedCards(prev => new Set([...prev, index]));
+        });
     }, [userName]);
 
     useEffect(() => {
@@ -169,6 +199,7 @@ const PageThree = () => {
                                 role="button"
                                 tabIndex={0}
                             >
+                                <CountdownOverlay loaded={loadedCards.has(index)} />
                                 <canvas
                                     ref={el => setCanvasRef(el, index, design)}
                                     style={{ width: '100%', height: 'auto', display: 'block' }}
