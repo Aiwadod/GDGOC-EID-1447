@@ -105,53 +105,53 @@ const PageThree = () => {
             setErrorMessage('الرجاء اختيار تصميم أولاً');
             return;
         }
+
         const design = designs[selectedCard];
-        if (!design) {
-            setErrorMessage('خطأ في التصميم');
-            return;
-        }
 
-        try {
-            // 1. إنشاء صورة عالية الدقة
-            const { blob, canvas } = await drawHighQualityCard(design, userName);
-            if (!blob) {
-                setErrorMessage('تعذر حفظ الصورة، حاول مرة أخرى');
-                return;
-            }
+        // ✅ canvas مؤقت بالحجم الكامل للصورة الأصلية
+        const fullCanvas = document.createElement('canvas');
+        await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                fullCanvas.width = img.naturalWidth;
+                fullCanvas.height = img.naturalHeight;
+                const ctx = fullCanvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
 
-            // 2. تحميل الصورة
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `eid-card-${userName}-${timestamp}.png`;
-            a.click();
-            URL.revokeObjectURL(url);
+                const name = String(userName || 'User Name').trim() || 'User Name';
+                const x = design.textX;
+                const y = design.textY;
+                const fs = Math.round(img.naturalHeight * (design.fontSizeRatio || 0.05));
 
-            // 3. إنشاء صورة مصغرة للصفحة التالية (اختياري - بنفس الطريقة السابقة)
-            const previewCanvas = document.createElement('canvas');
-            const previewScale = 800 / Math.max(canvas.width, canvas.height);
-            const pW = Math.round(canvas.width * previewScale);
-            const pH = Math.round(canvas.height * previewScale);
-            previewCanvas.width = pW;
-            previewCanvas.height = pH;
-            const pCtx = previewCanvas.getContext('2d');
-            pCtx.drawImage(canvas, 0, 0, pW, pH);
-            const imageDataUrl = previewCanvas.toDataURL('image/png');
+                ctx.save();
+                ctx.font = `400 ${fs}px ${design.fontFamily}`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = design.color;
+                ctx.fillText(name, x, y);
+                ctx.restore();
+                resolve();
+            };
+            img.onerror = reject;
+            img.src = design.image;
+        });
 
-            navigate('/page-four', {
-                state: {
-                    name: userName,
-                    design: design,
-                    imageDataUrl: imageDataUrl,
-                }
-            });
+        const blob = await new Promise(res => fullCanvas.toBlob(res, 'image/png'));
+        if (!blob) { setErrorMessage('تعذر حفظ الصورة، حاول مرة أخرى'); return; }
 
-        } catch (error) {
-            console.error(error);
-            setErrorMessage('حدث خطأ أثناء تجهيز الصورة');
-        }
+        const imageDataUrl = fullCanvas.toDataURL('image/png');
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `eid-card-${userName}-${timestamp}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        navigate('/page-four', { state: { name: userName, design: designs[selectedCard], imageDataUrl } });
     };
+
     if (!userName) return <Navigate to="/" replace />;
 
     return (
