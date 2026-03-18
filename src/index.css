@@ -873,8 +873,8 @@ footer span {
   }
 
   header .left {
-    gap: 1px;
-    margin-right: -13px;
+    gap: 0.4px;
+    margin-right: -11px;
   }
 
   header .left .eid-elfeter {
