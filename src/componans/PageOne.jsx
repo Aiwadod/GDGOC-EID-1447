@@ -26,7 +26,7 @@ const PageOne = () => {
         if (words.length >= 2) {
             navigate('/page-two', { state: { name } });
         } else {
-            setErrorMessage('الرجاء إدخال الاسم الثنائي (كلمتين على الأقل)');
+            setErrorMessage("يرجى إدخال الاسم الثنائي فقط");
         }
     };
 
