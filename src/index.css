@@ -610,11 +610,6 @@ header .right img {
   color: #fff !important;
 }
 
-.share-btn.snapchat img,
-.share-btn.tiktok img {
-  width: 30px;
-  height: 30px;
-}
 
 
 .share-btn.instagram {
@@ -631,6 +626,13 @@ header .right img {
 .share-btn.tiktok {
   background-color: #000 !important;
   color: #ff0050 !important;
+}
+
+.share-btn.instagram img,
+.share-btn.snapchat img,
+.share-btn.tiktok img {
+  width: 30px;
+  height: 30px;
 }
 
 .canvas-section {

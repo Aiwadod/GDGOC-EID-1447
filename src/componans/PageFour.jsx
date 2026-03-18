@@ -91,7 +91,7 @@ const PageFour = () => {
                         <div className="share-buttons-grid">
                             <button className="share-btn whatsapp" onClick={shareImage} disabled={!isReady}><FaWhatsapp size={28} /></button>
                             <button className="share-btn x-br" onClick={shareImage} disabled={!isReady}><FaXTwitter size={28} /></button>
-                            <button className="share-btn instagram" onClick={shareImage} disabled={!isReady}><FaInstagram size={28} /></button>
+                            <button className="share-btn instagram" onClick={shareImage} disabled={!isReady}><img src="/instagram.png" alt="" /></button>
                             <button className="share-btn snapchat" onClick={shareImage} disabled={!isReady}><img src="/snap.png" alt="" /></button>
                             <button className="share-btn tiktok" onClick={shareImage} disabled={!isReady}><img src="/tik-tok.png" alt="" /></button>
                             <button className="share-btn linkedin" onClick={shareImage} disabled={!isReady}><FaLinkedinIn size={28} /></button>

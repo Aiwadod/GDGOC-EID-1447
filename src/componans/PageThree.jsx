@@ -19,17 +19,17 @@ const normalAssetUrls = import.meta.glob('../assets/images/normal/*.{png,jpg,jpe
 
 // الإحداثيات على الصورة الأصلية 4962x7016
 const google = [
-    { id: 1, image: getAssetUrlByFilename(normalAssetUrls, 'design1.jpg'), textX: 2481, textY: 2455, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
-    { id: 2, image: getAssetUrlByFilename(normalAssetUrls, 'design2.jpg'), textX: 2481, textY: 5444, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
-    { id: 3, image: getAssetUrlByFilename(normalAssetUrls, 'design3.jpg'), textX: 2481, textY: 5444, fontSizeRatio: 0.05, color: '#9caabc', fontFamily: FONTS.IBM_PLEX_ARABIC },
-    { id: 4, image: getAssetUrlByFilename(normalAssetUrls, 'design4.jpg'), textX: 2481, textY: 6595, fontSizeRatio: 0.05, color: '#bcbcbc', fontFamily: FONTS.IBM_PLEX_ARABIC },
-    { id: 5, image: getAssetUrlByFilename(normalAssetUrls, 'design5.jpg'), textX: 2481, textY: 6050, fontSizeRatio: 0.05, color: '#c8b89a', fontFamily: FONTS.IBM_PLEX_ARABIC },
-    { id: 6, image: getAssetUrlByFilename(normalAssetUrls, 'design6.jpg'), textX: 2481, textY: 5355, fontSizeRatio: 0.06, color: '#393938', fontFamily: FONTS.KHALAYA },
-    { id: 7, image: getAssetUrlByFilename(normalAssetUrls, 'design7.jpg'), textX: 2481, textY: 1584, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
-    { id: 8, image: getAssetUrlByFilename(normalAssetUrls, 'design8.jpg'), textX: 2481, textY: 6560, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
-    { id: 9, image: getAssetUrlByFilename(normalAssetUrls, 'design9.jpg'), textX: 2481, textY: 1700, fontSizeRatio: 0.06, color: '#c1803a', fontFamily: FONTS.AYNAMA_CURVED },
-    { id: 10, image: getAssetUrlByFilename(normalAssetUrls, 'design10.jpg'), textX: 2481, textY: 2355, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
-    { id: 11, image: getAssetUrlByFilename(normalAssetUrls, 'design11.jpg'), textX: 2821, textY: 1700, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 1, image: getAssetUrlByFilename(googleAssetUrls, 'design1.jpg'), textX: 2481, textY: 2455, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
+    { id: 2, image: getAssetUrlByFilename(googleAssetUrls, 'design2.jpg'), textX: 2481, textY: 5444, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
+    { id: 3, image: getAssetUrlByFilename(googleAssetUrls, 'design3.jpg'), textX: 2481, textY: 5444, fontSizeRatio: 0.05, color: '#9caabc', fontFamily: FONTS.IBM_PLEX_ARABIC },
+    { id: 4, image: getAssetUrlByFilename(googleAssetUrls, 'design4.jpg'), textX: 2481, textY: 6595, fontSizeRatio: 0.05, color: '#bcbcbc', fontFamily: FONTS.IBM_PLEX_ARABIC },
+    { id: 5, image: getAssetUrlByFilename(googleAssetUrls, 'design5.jpg'), textX: 2481, textY: 6050, fontSizeRatio: 0.05, color: '#c8b89a', fontFamily: FONTS.IBM_PLEX_ARABIC },
+    { id: 6, image: getAssetUrlByFilename(googleAssetUrls, 'design6.jpg'), textX: 2481, textY: 5355, fontSizeRatio: 0.06, color: '#393938', fontFamily: FONTS.KHALAYA },
+    { id: 7, image: getAssetUrlByFilename(googleAssetUrls, 'design7.jpg'), textX: 2481, textY: 1584, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 8, image: getAssetUrlByFilename(googleAssetUrls, 'design8.jpg'), textX: 2481, textY: 6560, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 9, image: getAssetUrlByFilename(googleAssetUrls, 'design9.jpg'), textX: 2481, textY: 1700, fontSizeRatio: 0.06, color: '#c1803a', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 10, image: getAssetUrlByFilename(googleAssetUrls, 'design10.jpg'), textX: 2481, textY: 2355, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 11, image: getAssetUrlByFilename(googleAssetUrls, 'design11.jpg'), textX: 2821, textY: 1700, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
 ];
 
 const normal = [
@@ -56,7 +56,7 @@ function drawCard(canvas, design, userName, variant = 'grid') {
         const scale = Math.min(maxSide / img.naturalWidth, maxSide / img.naturalHeight, 1);
         const W = Math.round(img.naturalWidth * scale);
         const H = Math.round(img.naturalHeight * scale);
-        canvas.width = W;
+        canvas.width = W + 1;
         canvas.height = H;
         ctx.drawImage(img, 0, 0, W, H);
         const name = String(userName || 'User Name').trim() || 'User Name';
@@ -171,7 +171,7 @@ const PageThree = () => {
                 <div className="image-popup-overlay" onClick={() => setPreviewDesign(null)}>
                     <div className="image-popup-content" onClick={e => e.stopPropagation()}>
                         <button className="btn-close-popup" onClick={() => setPreviewDesign(null)}>×</button>
-                        <canvas ref={popupCanvasRef} style={{ maxWidth: '100%', maxHeight: '80vh' }} />
+                        <canvas ref={popupCanvasRef} style={{ maxWidth: '100%', maxHeight: '90vh' }} />
                     </div>
                 </div>
             )}
