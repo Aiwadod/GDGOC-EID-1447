@@ -5,30 +5,30 @@ import { FaXTwitter } from 'react-icons/fa6';
 import Header from './Header';
 
 // Countdown overlay shown while a card image is still loading
-const CountdownOverlay = ({ loaded }) => {
-    const [count, setCount] = useState(30);
+// const CountdownOverlay = ({ loaded }) => {
+//     const [count, setCount] = useState(30);
 
-    useEffect(() => {
-        if (loaded) return;
-        setCount(30);
-        const id = setInterval(() => {
-            setCount(prev => {
-                if (prev <= 1) { clearInterval(id); return 0; }
-                return prev - 1;
-            });
-        }, 1000);
-        return () => clearInterval(id);
-    }, [loaded]);
+//     useEffect(() => {
+//         if (loaded) return;
+//         setCount(30);
+//         const id = setInterval(() => {
+//             setCount(prev => {
+//                 if (prev <= 1) { clearInterval(id); return 0; }
+//                 return prev - 1;
+//             });
+//         }, 1000);
+//         return () => clearInterval(id);
+//     }, [loaded]);
 
-    if (loaded) return null;
+//     if (loaded) return null;
 
-    return (
-        <div className="card-loading-overlay">
-            <span className="card-loading-count">(00:{count})</span>
-            <p className="card-loading-text"> نُقدر انتظارك لنقدم اعلى جودة التصاميم  🤍</p>
-        </div>
-    );
-};
+//     return (
+//         <div className="card-loading-overlay">
+//             <span className="card-loading-count">(00:{count})</span>
+//             <p className="card-loading-text"> نُقدر انتظارك لنقدم اعلى جودة التصاميم  🤍</p>
+//         </div>
+//     );
+// };
 
 const PageFour = () => {
     const location = useLocation();
@@ -225,7 +225,7 @@ const PageFour = () => {
                     </div>
                     <div className="canvas-section">
                         <div className="page-four-preview">
-                            <CountdownOverlay loaded={isReady} />
+                            {/* <CountdownOverlay loaded={isReady} /> */}
                             <canvas ref={canvasRef} style={{ width: '100%', height: 'auto', display: 'block' }} />
                         </div>
                     </div>
