@@ -84,6 +84,7 @@ const PageThree = () => {
     const [selectedCard, setSelectedCard] = useState(null);
     const [activeCard, setActiveCard] = useState(null);
     const [previewDesign, setPreviewDesign] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const canvasRefs = useRef([]);
     const popupCanvasRef = useRef(null);
@@ -100,11 +101,20 @@ const PageThree = () => {
     }, [previewDesign, userName]);
 
     const handleNext = async () => {
-        if (selectedCard === null) { alert('الرجاء اختيار تصميم أولاً'); return; }
+        if (selectedCard === null) {
+            setErrorMessage('الرجاء اختيار تصميم أولاً');
+            return;
+        }
         const canvas = canvasRefs.current[selectedCard];
-        if (!canvas) { alert('تعذر تجهيز الصورة، حاول مرة أخرى'); return; }
+        if (!canvas) {
+            setErrorMessage('تعذر تجهيز الصورة، حاول مرة أخرى');
+            return;
+        }
         const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-        if (!blob) { alert('تعذر حفظ الصورة، حاول مرة أخرى'); return; }
+        if (!blob) {
+            setErrorMessage('تعذر حفظ الصورة، حاول مرة أخرى');
+            return;
+        }
         const imageDataUrl = canvas.toDataURL('image/png');
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const url = URL.createObjectURL(blob);
@@ -140,12 +150,15 @@ const PageThree = () => {
                                 {activeCard === index && (
                                     <div className="card-overlay" onClick={e => e.stopPropagation()}>
                                         <button className="btn-view" onClick={e => { e.stopPropagation(); setPreviewDesign(design); }}>عرض</button>
-                                        <button className="btn-select" onClick={e => { e.stopPropagation(); setSelectedCard(index); setActiveCard(null); }}>اختيار</button>
+                                        <button className="btn-select" onClick={e => { e.stopPropagation(); setSelectedCard(index); setActiveCard(null); setErrorMessage(''); }}>اختيار</button>
                                     </div>
                                 )}
                             </div>
                         ))}
                     </div>
+                    {errorMessage && (
+                        <p className="error-message">{errorMessage}</p>
+                    )}
                     <div className="action-buttons">
                         <Link to="/page-two" state={{ name: userName }}>
                             <button className="btn-yellow">السابق</button>
@@ -162,6 +175,9 @@ const PageThree = () => {
                     </div>
                 </div>
             )}
+            <footer>
+                <a href='https://linktr.ee/ai.wadod' target='_blank'>تصميم و تطوير <span>ودود</span></a>
+            </footer>
         </div>
     );
 };

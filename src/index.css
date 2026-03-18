@@ -156,16 +156,20 @@ header .right img {
 }
 
 /* Reduced padding for cards in subsequent pages */
-.page-two .card,
+
 .page-three .card {
   padding: 40px 20px;
+}
+
+.page-two .card {
+  padding: 35px 20px;
 }
 
 .card h3 {
   font-weight: 700;
   font-size: 48px;
   color: #000;
-  margin-bottom: 100px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -177,7 +181,7 @@ header .right img {
 
 /* --- Card Form Elements --- */
 .card input {
-  background-color: #EE403280;
+  background-color: #EE4032;
   /* Semantic representation: #EE4032 with 50% opacity */
   color: #fff;
   border: none;
@@ -203,9 +207,26 @@ header .right img {
   opacity: 1;
 }
 
+/* Hint text shown below the title on page one */
+.input-hint {
+  font-size: 22px;
+  color: #aaa;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Inline error message shown below the input */
+.error-message {
+  color: #86888E;
+  font-size: 32px;
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
 /* Primary Button Styling */
 .card button {
-  background-color: #2CB35D80;
+  background-color: #2CB35D;
   color: #fff;
   border: none;
   border-radius: 30px;
@@ -224,7 +245,7 @@ header .right img {
 
 /* Selectable Choice Buttons (e.g. Categories) */
 .card .btn-choice {
-  background-color: #EE403280;
+  background-color: #EE4032;
   border-radius: 12px;
   padding: 16px 30px;
   width: 100%;
@@ -239,9 +260,6 @@ header .right img {
   margin-bottom: 10px;
 }
 
-.page-two .card {
-  padding: 20px 20px;
-}
 
 /* Hover and active states for choices */
 .card .btn-choice:hover,
@@ -257,13 +275,9 @@ header .right img {
 
 /* Variant modifier for blue choice buttons */
 .card .btn-choice.blue {
-  background-color: #007AC080;
-}
-
-.card .btn-choice.blue:hover,
-.card .btn-choice.blue.selected {
   background-color: #007AC0;
 }
+
 
 /* Navigation Action Buttons Group */
 .action-buttons {
@@ -281,14 +295,10 @@ header .right img {
 /* Variant modifier for yellow navigation buttons */
 .card button.btn-yellow,
 .card button.yellow {
-  background-color: #FFC10E80;
+  background-color: #FFC10E;
   color: #fff;
 }
 
-.card button.btn-yellow:hover,
-.card button.yellow:hover {
-  background-color: #FFC10E;
-}
 
 /* ==========================================================================
   5. GRID SYSTEM (PAGE THREE)
@@ -299,7 +309,7 @@ header .right img {
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   width: 100%;
-  max-width: 600px;
+  max-width: 760px;
   margin-bottom: 30px;
 }
 
@@ -408,7 +418,7 @@ header .right img {
 }
 
 .btn-view {
-  background-color: #e60000 !important;
+  background-color: #F40000 !important;
   color: white !important;
   border: none !important;
   padding: 8px 40px !important;
@@ -437,13 +447,6 @@ header .right img {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-.btn-view:hover {
-  background-color: #cc0000 !important;
-}
-
-.btn-select:hover {
-  background-color: #3367d6 !important;
-}
 
 .image-popup-overlay {
   position: fixed;
@@ -603,9 +606,16 @@ header .right img {
 }
 
 .share-btn.snapchat {
-  background-color: #FFFC00 !important;
+  background-color: #FFC10E !important;
   color: #fff !important;
 }
+
+.share-btn.snapchat img,
+.share-btn.tiktok img {
+  width: 30px;
+  height: 30px;
+}
+
 
 .share-btn.instagram {
   background-color: #f0f0f0 !important;
@@ -713,6 +723,11 @@ footer span {
   .card h3 {
     font-size: 30px;
     margin-bottom: 40px;
+  }
+
+  .page-two .card h3 {
+    font-size: 30px;
+    margin-bottom: 10px;
   }
 
   .card input {

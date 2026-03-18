@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from './Header';
-import Popup from './Popup';
 
 const PageOne = () => {
     const location = useLocation();
     const [name, setName] = useState(location.state?.name || '');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
+
     const handleNext = () => {
         const trimmed = name.trim();
         const arabicOnly = /^[\u0600-\u06FF\s]+$/;
@@ -36,20 +36,25 @@ const PageOne = () => {
             <div className="page-one">
                 <div className="card">
                     <h3>أدخل الاسم الثنائي</h3>
+                    {errorMessage && (
+                        <p className="error-message">{errorMessage}</p>
+                    )}
                     <input
                         type="text"
                         placeholder="اسمك يهمنا!"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => {
+                            setName(e.target.value);
+                            if (errorMessage) setErrorMessage('');
+                        }}
+                        style={errorMessage ? { backgroundColor: '#e53e3e', color: '#fff', border: '2px solid #c53030' } : {}}
                     />
                     <button onClick={handleNext}>التالي</button>
                 </div>
             </div>
-
-            <Popup
-                message={errorMessage}
-                onClose={() => setErrorMessage('')}
-            />
+            <footer>
+                <a href='https://linktr.ee/ai.wadod' target='_blank'>تصميم و تطوير <span>ودود</span></a>
+            </footer>
         </div>
     );
 };
