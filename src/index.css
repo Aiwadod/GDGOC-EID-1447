@@ -878,7 +878,7 @@ footer span {
 
   header .left .eid-elfeter {
     width: 120px;
-    margin-bottom: -11px;
+    margin-bottom: -10px;
   }
 
   .logo {
@@ -899,9 +899,9 @@ footer span {
     background-image: url("./assets/backgrounds/background-responsive.png");
   }
 
-  .page-two {
-    margin: 0 auto 50px auto;
-  }
+  /* .page-two {
+    margin: 20 auto 35px auto;
+  } */
 
   .page-three {
     border-radius: 20px;
