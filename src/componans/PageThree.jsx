@@ -114,7 +114,7 @@ const PageThree = () => {
             const img = new Image();
             img.crossOrigin = 'anonymous';
             img.onload = () => {
-                fullCanvas.width = img.naturalWidth;
+                fullCanvas.width = img.naturalWidth + 1;
                 fullCanvas.height = img.naturalHeight;
                 const ctx = fullCanvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
@@ -171,7 +171,7 @@ const PageThree = () => {
                             >
                                 <canvas
                                     ref={el => setCanvasRef(el, index, design)}
-                                    style={{ width: '100%', height: 'auto', display: 'block', background: '#f0f0f0' }}
+                                    style={{ width: '100%', height: 'auto', display: 'block' }}
                                 />
                                 {activeCard === index && (
                                     <div className="card-overlay" onClick={e => e.stopPropagation()}>

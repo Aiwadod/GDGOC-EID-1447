@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
-import { FaWhatsapp, FaSnapchatGhost, FaInstagram, FaLinkedinIn, FaTiktok } from 'react-icons/fa';
+import { FaWhatsapp, FaLinkedinIn } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import Header from './Header';
 
@@ -11,10 +11,10 @@ const PageFour = () => {
     const [imageBlob, setImageBlob] = useState(null);
     const [isReady, setIsReady] = useState(false);
 
-    // Share payload without file
+    // Share payload (without file)
     const sharePayload = useMemo(() => ({ title: 'Eid Mubarak', text: 'Eid Mubarak' }), []);
 
-    // Universal share function – tries Web Share first, falls back to download
+    // Universal share function – uses Web Share if available, otherwise downloads
     const shareImage = async () => {
         if (!imageBlob) return;
 
@@ -32,7 +32,7 @@ const PageFour = () => {
                 return; // success
             } catch (err) {
                 console.log('Share cancelled or failed', err);
-                // Fall through to download
+                // fall through to download
             }
         }
 
