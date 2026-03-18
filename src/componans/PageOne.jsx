@@ -11,7 +11,7 @@ const PageOne = () => {
     const handleNext = () => {
         const trimmed = name.trim();
         const arabicOnly = /^[\u0600-\u06FF\s]+$/;
-        const words = trimmed.split(/\s+/).filter((w) => w.length > 0);
+
 
         if (!trimmed) {
             setErrorMessage('الرجاء إدخال الاسم');
@@ -23,15 +23,11 @@ const PageOne = () => {
             return;
         }
 
-        if (words.length >= 2) {
-            navigate('/page-two', { state: { name } });
-        } else {
-            setErrorMessage("يرجى إدخال الاسم الثنائي فقط");
-        }
+        navigate('/page-two', { state: { name } });
     };
 
     return (
-        <div className="page-container">
+        <div className="page-container-one">
             <Header />
             <div className="page-one">
                 <div className="card">
@@ -45,8 +41,13 @@ const PageOne = () => {
                             placeholder="اسمك يهمنا!"
                             value={name}
                             onChange={(e) => {
-                                // Collapse multiple consecutive spaces into one
-                                const val = e.target.value.replace(/  +/g, ' ');
+                                // Strip any second space (e.g. from paste) — allow max one space
+                                let val = e.target.value;
+                                const firstSpace = val.indexOf(' ');
+                                if (firstSpace !== -1) {
+                                    // Keep only up to and including the first space, then the rest with no spaces
+                                    val = val.slice(0, firstSpace + 1) + val.slice(firstSpace + 1).replace(/ /g, '');
+                                }
                                 setName(val);
                                 // Error 1: show Arabic-only error while typing non-Arabic
                                 const arabicOnly = /^[\u0600-\u06FF\s]*$/;
@@ -57,9 +58,11 @@ const PageOne = () => {
                                 }
                             }}
                             onKeyDown={(e) => {
-                                // Error 2: when space is pressed, remind user to complete their two-part name
-                                if (e.key === ' ') {
-                                    setErrorMessage('أكمل كتابة اسمك الثنائي');
+                                // Block a second space and show error
+                                if (e.key === ' ' && name.includes(' ')) {
+                                    e.preventDefault();
+                                    setErrorMessage('مسموح بمسافة واحدة فقط');
+                                    return;
                                 }
                             }}
                             style={errorMessage ? { color: '#fff' } : {}}

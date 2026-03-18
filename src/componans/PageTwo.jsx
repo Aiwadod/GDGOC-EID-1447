@@ -27,7 +27,7 @@ const PageTwo = () => {
     }, [userName, navigate]);
 
     return (
-        <div className="page-container">
+        <div className="page-container-tow">
             <Header />
             <div className="page-two">
                 <div className="card">
@@ -57,7 +57,7 @@ const PageTwo = () => {
                 </div>
             </div>
             <footer>
-                <a href='https://linktr.ee/ai.wadod' target='_blank'><img src="/copy.png" alt="" /></a>
+                <a href='https://linktr.ee/ai.wadod' target='_blank'>تصميم و تطوير <span>ودود</span></a>
             </footer>
         </div>
     );
