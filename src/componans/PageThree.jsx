@@ -202,7 +202,7 @@ const PageThree = () => {
                 </div>
             )}
             <footer>
-                <a href='https://linktr.ee/ai.wadod' target='_blank'><img src="/designer.png" alt="" /></a>
+                <a href='https://linktr.ee/ai.wadod' target='_blank'><img src="/copy.png" alt="" /></a>
             </footer>
         </div>
     );

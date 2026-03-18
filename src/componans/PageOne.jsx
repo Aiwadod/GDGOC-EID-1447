@@ -37,15 +37,29 @@ const PageOne = () => {
                 <div className="card">
                     <h3>أدخل الاسم الثنائي</h3>
                     {errorMessage && (
-                        <p className="error-message">{errorMessage || "يرجى إدخال الاسم الثنائي فقط"}</p>
+                        <p className="error-message">{errorMessage}</p>
                     )}
                     <input
                         type="text"
                         placeholder="اسمك يهمنا!"
                         value={name}
                         onChange={(e) => {
-                            setName(e.target.value);
-                            if (errorMessage) setErrorMessage('');
+                            // Collapse multiple consecutive spaces into one
+                            const val = e.target.value.replace(/  +/g, ' ');
+                            setName(val);
+                            // Error 1: show Arabic-only error while typing non-Arabic
+                            const arabicOnly = /^[\u0600-\u06FF\s]*$/;
+                            if (val && !arabicOnly.test(val)) {
+                                setErrorMessage('الرجاء كتابة الاسم باللغة العربية فقط');
+                            } else {
+                                setErrorMessage('');
+                            }
+                        }}
+                        onKeyDown={(e) => {
+                            // Error 2: when space is pressed, remind user to complete their two-part name
+                            if (e.key === ' ') {
+                                setErrorMessage('أكمل كتابة اسمك الثنائي');
+                            }
                         }}
                         style={errorMessage ? { backgroundColor: '#e53e3e', color: '#fff', border: '2px solid #c53030' } : {}}
                     />
@@ -53,7 +67,7 @@ const PageOne = () => {
                 </div>
             </div>
             <footer>
-                <a href='https://linktr.ee/ai.wadod' target='_blank'><img src="/designer.png" alt="" /></a>
+                <a href='https://linktr.ee/ai.wadod' target='_blank'><img src="/copy.png" alt="" /></a>
             </footer>
         </div>
     );
