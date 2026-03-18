@@ -7,23 +7,23 @@ const CountdownOverlay = ({ loaded }) => {
     const [count, setCount] = useState(30);
 
     useEffect(() => {
+        // لو الصورة اتحملت خلاص، وقف العداد
         if (loaded) return;
-        setCount(30);
+
         const id = setInterval(() => {
-            setCount(prev => {
-                if (prev <= 1) { clearInterval(id); return 0; }
-                return prev - 1;
-            });
+            setCount(prev => (prev > 0 ? prev - 1 : 30));
         }, 1000);
+
         return () => clearInterval(id);
     }, [loaded]);
 
+    // لو الصورة جاهزة، اخفي الـ overlay
     if (loaded) return null;
 
     return (
         <div className="card-loading-overlay">
-            <span className="card-loading-count">(00:{count})</span>
-            <p className="card-loading-text"> نُقدر انتظارك لنقدم اعلى جودة التصاميم  🤍</p>
+            <span className="card-loading-count">(00:{String(count).padStart(2, '0')})</span>
+            <p className="card-loading-text">نُقدر انتظارك لنقدم اعلى جودة التصاميم 🤍</p>
         </div>
     );
 };
@@ -190,6 +190,7 @@ const PageThree = () => {
             <main className="page-three">
                 <div className="card">
                     <h3 className="page-three-title">اختر التصميم المناسب لك</h3>
+                    <CountdownOverlay loaded={loadedCards.size >= designs.length} />
                     <div className="grid-container">
                         {designs.map((design, index) => (
                             <div
@@ -199,7 +200,6 @@ const PageThree = () => {
                                 role="button"
                                 tabIndex={0}
                             >
-                                <CountdownOverlay loaded={loadedCards.has(index)} />
                                 <canvas
                                     ref={el => setCanvasRef(el, index, design)}
                                     style={{ width: '100%', height: 'auto', display: 'block' }}
