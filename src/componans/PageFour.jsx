@@ -172,7 +172,7 @@ const PageFour = () => {
                                 disabled={!isReady}
                                 title="Share via Snapchat"
                             >
-                                <img src="/snapchat.png" alt="Snapchat" style={{ width: 28, height: 28 }} />
+                                <img src="/snap.png" alt="Snapchat" style={{ width: 28, height: 28 }} />
                             </button>
                             <button
                                 className="share-btn tiktok"
