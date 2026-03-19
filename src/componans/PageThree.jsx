@@ -45,8 +45,8 @@ const normalAssetUrls = import.meta.glob('../assets/images/normal/*.{png,jpg,jpe
 // ── الإحداثيات محسوبة من Illustrator على الصور 827x1170 ──
 const google = [
     { id:1,  image: getAssetUrlByFilename(googleAssetUrls,'design1.jpg'),  textX:414, textY:400,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.IBM_PLEX_ARABIC },
-    { id:2,  image: getAssetUrlByFilename(googleAssetUrls,'design2.jpg'),  textX:414, textY:910,  fontSizeRatio:0.06, color:'#ffffff', fontFamily:FONTS.KHALAYA },
-    { id:3,  image: getAssetUrlByFilename(googleAssetUrls,'design3.jpg'),  textX:414, textY:885,  fontSizeRatio:0.05, color:'#9caabc', fontFamily:FONTS.AYNAMA_CURVED },
+    { id:2,  image: getAssetUrlByFilename(googleAssetUrls,'design2.jpg'),  textX:414, textY:910,  fontSizeRatio:0.06, color:'#ffffff', fontFamily:FONTS.IBM_PLEX_ARABIC },
+    { id:3,  image: getAssetUrlByFilename(googleAssetUrls,'design3.jpg'),  textX:414, textY:885,  fontSizeRatio:0.05, color:'#9caabc', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:4,  image: getAssetUrlByFilename(googleAssetUrls,'design4.jpg'),  textX:414, textY:1100, fontSizeRatio:0.05, color:'#bcbcbc', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:5,  image: getAssetUrlByFilename(googleAssetUrls,'design5.jpg'),  textX:414, textY:1014, fontSizeRatio:0.05, color:'#c8b89a', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:6,  image: getAssetUrlByFilename(googleAssetUrls,'design6.jpg'),  textX:417, textY:925,  fontSizeRatio:0.06, color:'#393938', fontFamily:FONTS.KHALAYA },
@@ -59,8 +59,8 @@ const google = [
 
 const normal = [
     { id:1,  image: getAssetUrlByFilename(normalAssetUrls,'design1.png'),  textX:414, textY:400,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.IBM_PLEX_ARABIC },
-    { id:2,  image: getAssetUrlByFilename(normalAssetUrls,'design2.png'),  textX:414, textY:910,  fontSizeRatio:0.06, color:'#ffffff', fontFamily:FONTS.KHALAYA },
-    { id:3,  image: getAssetUrlByFilename(normalAssetUrls,'design3.png'),  textX:414, textY:885,  fontSizeRatio:0.05, color:'#9caabc', fontFamily:FONTS.AYNAMA_CURVED },
+    { id:2,  image: getAssetUrlByFilename(normalAssetUrls,'design2.png'),  textX:414, textY:910,  fontSizeRatio:0.06, color:'#ffffff', fontFamily:FONTS.IBM_PLEX_ARABIC },
+    { id:3,  image: getAssetUrlByFilename(normalAssetUrls,'design3.png'),  textX:414, textY:885,  fontSizeRatio:0.05, color:'#9caabc', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:4,  image: getAssetUrlByFilename(normalAssetUrls,'design4.png'),  textX:414, textY:1100, fontSizeRatio:0.05, color:'#bcbcbc', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:5,  image: getAssetUrlByFilename(normalAssetUrls,'design5.png'),  textX:414, textY:1014, fontSizeRatio:0.05, color:'#c8b89a', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:6,  image: getAssetUrlByFilename(normalAssetUrls,'design6.png'),  textX:417, textY:925,  fontSizeRatio:0.06, color:'#393938', fontFamily:FONTS.KHALAYA },
