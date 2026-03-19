@@ -36,14 +36,6 @@ const PageFour = () => {
                 // fall through to download
             }
         }
-
-        // Fallback: download the image
-        const url = URL.createObjectURL(imageBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `eid-card-${Date.now()}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
     };
 
     // Draw the card on canvas (same logic as PageThree)
