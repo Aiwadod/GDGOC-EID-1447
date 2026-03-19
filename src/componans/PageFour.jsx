@@ -91,6 +91,7 @@ const PageFour = () => {
         img.onerror = err => console.error('Failed to load image', err);
         img.src = design.image;
     }, [name, design]);
+
     const shareWhatsapp = async () => {
         if (!imageBlob) return;
         const file = new File([imageBlob], 'eid-card.png', { type: 'image/png' });
@@ -100,14 +101,12 @@ const PageFour = () => {
             navigator.canShare({ files: [file] });
 
         if (canShare) {
-            try {
-                await navigator.share({ title: '', files: [file] });
-            } catch (err) { console.log(err); }
+            try { await navigator.share({ title: '', files: [file] }); }
+            catch (err) { openPlatform('https://web.whatsapp.com/'); }
         } else {
-            window.open('https://web.whatsapp.com/', '_blank');
+            openPlatform('https://web.whatsapp.com/');
         }
     };
-
     const shareX = async () => {
         if (!imageBlob) return;
         const url = URL.createObjectURL(imageBlob);
@@ -134,53 +133,27 @@ const PageFour = () => {
                         <p className="share-subtitle">شاركوا فرحتكم مع احبابكم!</p>
                         <div className="share-buttons-grid">
                             {/* All buttons use the same share function – will open native share sheet */}
-                            <button
-                                className="share-btn whatsapp"
-                                onClick={shareWhatsapp}
-                                disabled={!isReady}
-                                title="Share via WhatsApp"
-                            >
+                            // واتساب — بيشارك مباشرة
+                            <button className="share-btn whatsapp" onClick={shareWhatsapp} disabled={!isReady}>
                                 <FaWhatsapp size={28} />
                             </button>
-                            <button
-                                className="share-btn x-br"
-                                onClick={shareX}
-                                disabled={!isReady}
-                                title="Share via X"
-                            >
+
+// X — يحمّل الصورة ويفتح تويتر
+                            <button className="share-btn x-br" onClick={shareX} disabled={!isReady}>
                                 <FaXTwitter size={28} />
                             </button>
-                            <button
-                                className="share-btn instagram"
-                                onClick={shareImage}
-                                disabled={!isReady}
-                                title="Share via Instagram"
-                            >
-                                <img src="/instagram.png" alt="Instagram" style={{ width: 28, height: 28 }} />
 
+// الباقي — يفتح الموقع مباشرة بدون تحميل
+                            <button className="share-btn instagram" onClick={() => openPlatform('https://www.instagram.com/')} disabled={!isReady}>
+                                <img src="/instagram.png" alt="Instagram" style={{ width: 28, height: 28 }} />
                             </button>
-                            <button
-                                className="share-btn snapchat"
-                                onClick={shareImage}
-                                disabled={!isReady}
-                                title="Share via Snapchat"
-                            >
+                            <button className="share-btn snapchat" onClick={() => openPlatform('https://www.snapchat.com/')} disabled={!isReady}>
                                 <img src="/snap.png" alt="Snapchat" style={{ width: 28, height: 28 }} />
                             </button>
-                            <button
-                                className="share-btn tiktok"
-                                onClick={shareImage}
-                                disabled={!isReady}
-                                title="Share via TikTok"
-                            >
+                            <button className="share-btn tiktok" onClick={() => openPlatform('https://www.tiktok.com/')} disabled={!isReady}>
                                 <img src="/tik-tok.png" alt="TikTok" style={{ width: 28, height: 28 }} />
                             </button>
-                            <button
-                                className="share-btn linkedin"
-                                onClick={shareImage}
-                                disabled={!isReady}
-                                title="Share via LinkedIn"
-                            >
+                            <button className="share-btn linkedin" onClick={() => openPlatform('https://www.linkedin.com/')} disabled={!isReady}>
                                 <FaLinkedinIn size={28} />
                             </button>
                         </div>
