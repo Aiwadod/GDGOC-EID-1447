@@ -53,7 +53,7 @@ const google = [
     { id:7,  image: getAssetUrlByFilename(googleAssetUrls,'design7.jpg'),  textX:414, textY:264,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
     { id:8,  image: getAssetUrlByFilename(googleAssetUrls,'design8.jpg'),  textX:414, textY:1090, fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
     { id:9,  image: getAssetUrlByFilename(googleAssetUrls,'design9.jpg'),  textX:414, textY:271,  fontSizeRatio:0.05, color:'#c8860a', fontFamily:FONTS.AYNAMA_CURVED },
-    { id:10, image: getAssetUrlByFilename(googleAssetUrls,'design10.jpg'), textX:453, textY:379,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
+    { id:10, image: getAssetUrlByFilename(googleAssetUrls,'design10.jpg'), textX:414, textY:379,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
     { id:11, image: getAssetUrlByFilename(googleAssetUrls,'design11.jpg'), textX:480, textY:290,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
 ];
 
